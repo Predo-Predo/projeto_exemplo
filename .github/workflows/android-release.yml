@@ -22,6 +22,12 @@ jobs:
       with:
         flutter-version: '3.32.5'
 
+    # 👇 Etapa adicionada para criar o JSON a partir do secret
+    - name: Criar arquivo de credenciais da Play Store
+      run: |
+        mkdir -p credentials
+        echo "${{ secrets.GOOGLE_SERVICE_JSON }}" > credentials/play-service-account.json
+
     - name: Flutter pub get
       run: flutter pub get
 
