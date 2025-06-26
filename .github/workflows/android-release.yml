@@ -1,0 +1,39 @@
+name: Android Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      company_id:
+        description: 'ID da empresa'
+        required: true
+        default: '1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.5'
+
+      - name: Rodar build APK
+        run: |
+          flutter pub get
+          flutter build apk
+
+      - name: (Opcional) Fazer upload do APK como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-build
+          path: build/app/outputs/flutter-apk/app-release.apk
