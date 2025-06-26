@@ -1,39 +1,35 @@
 name: Android Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      company_id:
-        description: 'ID da empresa'
-        required: true
-        default: '1'
+  workflow_dispatch:  # importante para permitir acionamento externo via API
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Configurar Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
 
-      - name: Configurar Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.16.5'
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.6'
 
-      - name: Rodar build APK
-        run: |
-          flutter pub get
-          flutter build apk
+    - name: Flutter pub get
+      run: flutter pub get
 
-      - name: (Opcional) Fazer upload do APK como artefato
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk-build
-          path: build/app/outputs/flutter-apk/app-release.apk
+    - name: Build APK
+      run: flutter build apk --release
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
