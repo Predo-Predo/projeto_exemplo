@@ -1,41 +1,41 @@
 name: Android Release
 
 on:
-  workflow_dispatch:  # importante para permitir acionamento externo via API
+  workflow_dispatch:  # permite disparar via API
 
 jobs:
   build:
-    name: Build APK
+    name: Build AAB
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'adopt'
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
 
-    - name: Install Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.32.5'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.5'
 
-    # 👇 Etapa para reconstruir JSON de credenciais da Play Store
-    - name: Criar arquivo de credenciais da Play Store
-      run: |
-        mkdir -p credentials
-        echo "${{ secrets.GOOGLE_SERVICE_JSON }}" > credentials/play-service-account.json
+      # 👇 Etapa opcional para reconstruir JSON da Play Store (se for usar na publicação futura)
+      - name: Criar arquivo de credenciais da Play Store
+        run: |
+          mkdir -p credentials
+          echo "${{ secrets.GOOGLE_SERVICE_JSON }}" > credentials/play-service-account.json
 
-    - name: Flutter pub get
-      run: flutter pub get
+      - name: Flutter pub get
+        run: flutter pub get
 
-    - name: Build APK
-      run: flutter build apk --release
+      - name: Build AAB
+        run: flutter build appbundle --release
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: release-apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
