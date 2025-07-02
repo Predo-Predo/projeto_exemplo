@@ -1,6 +1,8 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
-    id("kotlin-android")
+    id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -26,22 +28,26 @@ android {
         versionName = flutter.versionName
     }
 
-    // ✅ Bloco de assinatura
     signingConfigs {
         create("release") {
-            val props = rootProject.file("key.properties").readProperties()
-            storeFile = file(props["storeFile"] ?: "")
-            storePassword = props["storePassword"] as String
-            keyAlias = props["keyAlias"] as String
-            keyPassword = props["keyPassword"] as String
+            val propsFile = rootProject.file("android/key.properties")
+            if (propsFile.exists()) {
+                val props = Properties()
+                props.load(propsFile.inputStream())
+
+                storeFile = file("android/app/" + props["storeFile"]!!)
+                storePassword = props["storePassword"] as String
+                keyAlias = props["keyAlias"] as String
+                keyPassword = props["keyPassword"] as String
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
-            shrinkResources = false
             isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
