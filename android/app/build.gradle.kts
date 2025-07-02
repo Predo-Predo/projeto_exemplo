@@ -30,12 +30,14 @@ android {
 
     signingConfigs {
         create("release") {
-            val propsFile = rootProject.file("android/key.properties")
+            // ✅ Caminho corrigido: key.properties está na raiz do projeto
+            val propsFile = rootProject.file("key.properties")
             if (propsFile.exists()) {
                 val props = Properties().apply {
                     load(propsFile.inputStream())
                 }
 
+                // ✅ Caminho do keystore relativo ao diretório do app
                 storeFile = file("android/app/${props["storeFile"]}")
                 storePassword = props["storePassword"] as String
                 keyAlias = props["keyAlias"] as String
@@ -50,7 +52,7 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = signingConfigs.findByName("release")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
