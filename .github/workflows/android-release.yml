@@ -22,7 +22,6 @@ jobs:
         with:
           flutter-version: '3.32.5'
 
-      # 👇 Etapa opcional para reconstruir JSON da Play Store (se for usar na publicação futura)
       - name: Criar arquivo de credenciais da Play Store
         run: |
           mkdir -p credentials
@@ -30,6 +29,19 @@ jobs:
 
       - name: Flutter pub get
         run: flutter pub get
+
+      # 🔐 Decodificar o keystore do secret
+      - name: Decode keystore from secret
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      # 📄 Criar key.properties com os secrets
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
 
       - name: Build AAB
         run: flutter build appbundle --release
