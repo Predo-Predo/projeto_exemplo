@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.projeto_exemplo"
+    namespace = "com.meuprojetoexemplo.appteste"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
