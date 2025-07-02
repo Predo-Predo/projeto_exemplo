@@ -26,22 +26,22 @@ android {
         versionName = flutter.versionName
     }
 
+    // ✅ Bloco de assinatura
     signingConfigs {
         create("release") {
-            if (project.hasProperty("KEYSTORE_PASSWORD")) {
-                storeFile = file("upload-keystore.jks")
-                storePassword = project.property("KEYSTORE_PASSWORD") as String
-                keyAlias = project.property("KEY_ALIAS") as String
-                keyPassword = project.property("KEY_PASSWORD") as String
-            }
+            val props = rootProject.file("key.properties").readProperties()
+            storeFile = file(props["storeFile"] ?: "")
+            storePassword = props["storePassword"] as String
+            keyAlias = props["keyAlias"] as String
+            keyPassword = props["keyPassword"] as String
         }
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             signingConfig = signingConfigs.getByName("release")
+            shrinkResources = false
             isMinifyEnabled = false
-            isShrinkResources = false
         }
     }
 }
