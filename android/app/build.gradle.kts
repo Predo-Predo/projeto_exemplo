@@ -30,15 +30,15 @@ android {
 
     signingConfigs {
         create("release") {
-            // ✅ Caminho corrigido: key.properties está na raiz do projeto
-            val propsFile = rootProject.file("key.properties")
+            // ✅ Caminho corrigido: key.properties agora está em android/app
+            val propsFile = file("key.properties")
             if (propsFile.exists()) {
                 val props = Properties().apply {
                     load(propsFile.inputStream())
                 }
 
-                // ✅ Caminho do keystore relativo ao diretório do app
-                storeFile = file("android/app/${props["storeFile"]}")
+                // ✅ Caminho do keystore relativo à pasta atual (android/app)
+                storeFile = file(props["storeFile"] as String)
                 storePassword = props["storePassword"] as String
                 keyAlias = props["keyAlias"] as String
                 keyPassword = props["keyPassword"] as String
