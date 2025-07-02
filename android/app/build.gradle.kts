@@ -32,22 +32,25 @@ android {
         create("release") {
             val propsFile = rootProject.file("android/key.properties")
             if (propsFile.exists()) {
-                val props = Properties()
-                props.load(propsFile.inputStream())
+                val props = Properties().apply {
+                    load(propsFile.inputStream())
+                }
 
-                storeFile = file("android/app/" + props["storeFile"]!!)
+                storeFile = file("android/app/${props["storeFile"]}")
                 storePassword = props["storePassword"] as String
                 keyAlias = props["keyAlias"] as String
                 keyPassword = props["keyPassword"] as String
+            } else {
+                println("⚠️ key.properties file not found. Release signing may fail.")
             }
         }
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 }
