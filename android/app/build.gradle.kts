@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -28,22 +27,21 @@ android {
     }
 
     signingConfigs {
-        release {
-            // Os valores abaixo são preenchidos dinamicamente via key.properties
+        create("release") {
             if (project.hasProperty("KEYSTORE_PASSWORD")) {
-                storeFile file("upload-keystore.jks")
-                storePassword KEYSTORE_PASSWORD
-                keyAlias KEY_ALIAS
-                keyPassword KEY_PASSWORD
+                storeFile = file("upload-keystore.jks")
+                storePassword = project.property("KEYSTORE_PASSWORD") as String
+                keyAlias = project.property("KEY_ALIAS") as String
+                keyPassword = project.property("KEY_PASSWORD") as String
             }
         }
     }
 
     buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            shrinkResources false
-            minifyEnabled false
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
